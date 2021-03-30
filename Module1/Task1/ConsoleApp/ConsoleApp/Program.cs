@@ -8,6 +8,8 @@ namespace ConsoleApp
         {
             string name = Introduce();
             Greet(name);
+
+            Console.ReadKey();
         }
 
         private static string Introduce()

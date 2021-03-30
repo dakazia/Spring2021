@@ -9,6 +9,8 @@ namespace ConsoleApp
         {
             string name = Introduce();
             ShowGreeting(name);
+
+            Console.ReadLine();
         }
 
         private static string Introduce()

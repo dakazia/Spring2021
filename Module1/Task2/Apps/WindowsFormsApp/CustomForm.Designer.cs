@@ -1,7 +1,7 @@
 ﻿
 namespace WindowsFormsApp
 {
-    partial class Form1
+    partial class CustomForm
     {
         /// <summary>
         /// Required designer variable.
@@ -64,7 +64,7 @@ namespace WindowsFormsApp
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.Submit_Click);
             // 
-            // Form1
+            // CustomForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -72,7 +72,7 @@ namespace WindowsFormsApp
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
-            this.Name = "Form1";
+            this.Name = "CustomForm";
             this.Text = "Introducing";
             this.ResumeLayout(false);
             this.PerformLayout();

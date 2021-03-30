@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <Reference Include="TimeGreeting">
-      <HintPath>..\..\ClassLibrary\ClassLibrary\bin\Debug\netstandard2.0\TimeGreeting.dll</HintPath>
+      <HintPath>..\ClassLibrary\bin\Debug\netstandard2.0\TimeGreeting.dll</HintPath>
     </Reference>
   </ItemGroup>
 
