@@ -48,7 +48,7 @@ namespace Task1
 
             if (predicate is null)
             {
-                throw new ArgumentNullException(nameof(products));
+                throw new ArgumentNullException(nameof(predicate));
             }
 
             for (int i = 0; i < products.Length; i++)
