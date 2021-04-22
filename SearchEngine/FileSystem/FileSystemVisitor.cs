@@ -15,7 +15,7 @@ namespace FileSystem
             _filters = filters;
         }
 
-        //public FileSystemVisitor(List<string> customSearch): this(filters)
+        //public FileSystemVisitor(List<string> customSearch) : this(filters)
         //{
         //    foreach (var item in customSearch)
         //    {
