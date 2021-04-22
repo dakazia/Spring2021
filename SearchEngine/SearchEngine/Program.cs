@@ -7,6 +7,8 @@ namespace SearchEngine
 {
     class Program
     {
+        private const string TimeOutputFormat = "HH:mm:ss.fff";
+
         static void Main(string[] args)
         {
             string path;
@@ -20,21 +22,28 @@ namespace SearchEngine
 
             FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(GetScanFilters());
             IEnumerable<string> fileSystemItem = fileSystemVisitor.FileSystemScan(path);
+            fileSystemVisitor.SearchStatus += SearchStatus;
 
             foreach (var item in fileSystemItem)
             {
                 Console.WriteLine(item);
             }
 
-            Console.WriteLine("Finish");
             Console.ReadKey();
+        }
+
+        private static void SearchStatus (object sender, SearchStatusEventArgs e)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.FoundTime.ToString(TimeOutputFormat) + ": " + e.ItemName);
+            Console.ResetColor();
         }
 
         private static Predicate<FileSystemItem> GetScanFilters()
         {
             Predicate<FileSystemItem> filters = default;
-
             string searchOption;
+
             do
             {
                 Console.WriteLine("Please enter correct search criteria:" + "\n" +

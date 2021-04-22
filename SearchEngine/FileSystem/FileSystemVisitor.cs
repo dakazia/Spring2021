@@ -8,35 +8,44 @@ namespace FileSystem
     {
         private bool _scan;
         private readonly Predicate<FileSystemItem> _filters;
+        public event EventHandler<SearchStatusEventArgs> SearchStatus;
 
-        public FileSystemVisitor() { }
         public FileSystemVisitor(Predicate<FileSystemItem> filters)
         {
             _filters = filters;
         }
 
+        //public FileSystemVisitor(List<string> customSearch): this(filters)
+        //{
+        //    foreach (var item in customSearch)
+        //    {
+
+        //    }
+        //}
+
         public IEnumerable<string> FileSystemScan(string path)
         {
-            //Event message ("Scan started.");
+            ShowSearchStatusEvent("Scan started.");
             _scan = true;
 
-            foreach (var directory in GetFileSystemItem(GetDirectories, path, "directory"))
+            foreach (var directory in GetFileSystemItem(GetDirectories, path, "Directory"))
             {
                 yield return directory;
 
             }
-            foreach (var file in GetFileSystemItem(GetFiles, path, "file"))
+            foreach (var file in GetFileSystemItem(GetFiles, path, "File"))
             {
                 yield return file;
             }
+            _scan = false;
+
+            ShowSearchStatusEvent("Scan finished.");
         }
 
         private IEnumerable<string> GetFileSystemItem(Func<string, IEnumerable<string>> getItemMethod, string path, string itemName)
         {
             foreach (var searchResult in getItemMethod(path))
             {
-                //Event message ($"{Name??} found.");
-
                 FileSystemItem item = new FileSystemItem();
                 FileAttributes attributes = File.GetAttributes(searchResult);
 
@@ -47,15 +56,18 @@ namespace FileSystem
 
                     if (_filters is null)
                     {
+                        ShowSearchStatusEvent(($"{itemName} found:"));
                         yield return searchResult;
                     }
                     else if (_filters(item))
                     {
+                        ShowSearchStatusEvent($"Filtered {itemName} found:");
                         yield return searchResult;
                     }
                 }
                 else
                 {
+                    ShowSearchStatusEvent($"{itemName} found:");
                     yield return searchResult;
                 }
             }
@@ -89,12 +101,12 @@ namespace FileSystem
 
                 catch (UnauthorizedAccessException UAEx)
                 {
-                    // Event message (UAEx.Message);
+                    ShowSearchStatusEvent(UAEx.Message);
                 }
 
                 catch (Exception e)
                 {
-                    // Event message (e.Message);
+                    ShowSearchStatusEvent(e.Message);
                 }
 
                 if (iterator.Current != null)
@@ -102,6 +114,27 @@ namespace FileSystem
                     yield return iterator.Current;
                 }
             }
+        }
+
+        private void ShowSearchStatusEvent(string mesage)
+        {
+            if (string.IsNullOrWhiteSpace(mesage))
+            {
+                throw new ArgumentException($"'{nameof(mesage)}' cannot be null or whitespace", nameof(mesage));
+            }
+
+            var args = new SearchStatusEventArgs()
+            {
+                ItemName = mesage,
+                FoundTime = DateTime.Now
+            };
+            OnEntryScanned(args);
+        }
+
+        protected virtual void OnEntryScanned(SearchStatusEventArgs e)
+        {
+            EventHandler<SearchStatusEventArgs> handler = SearchStatus;
+            handler?.Invoke(this, e);
         }
     }
 }
