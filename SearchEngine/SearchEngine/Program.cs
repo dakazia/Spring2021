@@ -12,15 +12,13 @@ namespace SearchEngine
 
         static void Main(string[] args)
         {
-            string path;
             string repeatSearch;
-
 
             do
             {
                 Console.WriteLine(@"Please enter a correct path (for example c:\Windows):");
                 //path = @"c:\Disk\Books\";
-                path = Console.ReadLine();
+                var path = Console.ReadLine();
 
                 while (string.IsNullOrEmpty(path) || string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
                 {
@@ -29,6 +27,7 @@ namespace SearchEngine
                 }
 
                 GetSearchOption(ref _customSearch);
+
                 FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(_customSearch);
                 IEnumerable<string> fileSystemItem = fileSystemVisitor.FileSystemScan(path);
                 fileSystemVisitor.SearchStatus += SearchStatus;
@@ -39,7 +38,6 @@ namespace SearchEngine
                 }
 
                 Console.WriteLine("\nRepeat search one more time? Press Yes: Y, No: N");
-
                 repeatSearch = Console.ReadLine();
 
             } while (repeatSearch != "N");
@@ -78,42 +76,5 @@ namespace SearchEngine
             Console.WriteLine(e.FoundTime.ToString(TimeOutputFormat) + ": " + e.ItemName);
             Console.ResetColor();
         }
-
-        //private static Predicate<FileSystemItem> GetScanFilters()
-        //{
-        //    Predicate<FileSystemItem> filters = default;
-        //    string searchOption;
-
-        //    do
-        //    {
-        //        Console.WriteLine("Please enter correct search criteria:" + "\n" +
-        //                          "1 - Display all files in a directory." + "\n" +
-        //                          "2 - Use custom search.");
-        //        searchOption = Console.ReadLine();
-
-        //    } while (!searchOption.Equals("1") && !searchOption.Equals("2"));
-
-        //    if (searchOption.Equals("2"))
-        //    {
-        //        Console.WriteLine("Please enter your search criteria:" + "\n" +
-        //                          "type of file:");
-        //        string typeFilter = Console.ReadLine();
-
-        //        if (!string.IsNullOrEmpty(typeFilter))
-        //        {
-        //            filters += item => item.Type.Contains(typeFilter, StringComparison.InvariantCulture);
-        //        }
-
-        //        Console.WriteLine("name of file:");
-        //        string nameFilter = Console.ReadLine();
-
-        //        if (!string.IsNullOrEmpty(nameFilter))
-        //        {
-        //            filters += item => item.Name.Contains(nameFilter, StringComparison.InvariantCulture);
-        //        }
-        //    }
-
-        //    return filters;
-        //}
     }
 }

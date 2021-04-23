@@ -118,16 +118,16 @@ namespace FileSystem
             }
         }
 
-        private void ShowSearchStatusEvent(string mesage)
+        private void ShowSearchStatusEvent(string message)
         {
-            if (string.IsNullOrWhiteSpace(mesage))
+            if (string.IsNullOrWhiteSpace(message))
             {
-                throw new ArgumentException($"'{nameof(mesage)}' cannot be null or whitespace", nameof(mesage));
+                throw new ArgumentException($"'{nameof(message)}' cannot be null or whitespace", nameof(message));
             }
 
             var args = new SearchStatusEventArgs()
             {
-                ItemName = mesage,
+                ItemName = message,
                 FoundTime = DateTime.Now
             };
             OnEntryScanned(args);
