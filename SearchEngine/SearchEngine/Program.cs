@@ -17,8 +17,8 @@ namespace SearchEngine
             do
             {
                 Console.WriteLine(@"Please enter a correct path (for example c:\Windows):");
-                //path = @"c:\Disk\Books\";
-                var path = Console.ReadLine();
+                var path = @"c:\Disk\Books\";
+                //var path = Console.ReadLine();
 
                 while (string.IsNullOrEmpty(path) || string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
                 {
@@ -30,7 +30,13 @@ namespace SearchEngine
 
                 FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(GetScanFilters());
                 IEnumerable<string> fileSystemItem = fileSystemVisitor.FileSystemScan(path);
-                fileSystemVisitor.SearchStatus += SearchStatus;
+                fileSystemVisitor.Start += Start;
+                fileSystemVisitor.FileFound += FileFound;
+                fileSystemVisitor.Finish += Finish;
+                fileSystemVisitor.DirectoryFound += DirectoryFound;
+                fileSystemVisitor.ErrorAppears += ErrorAppears;
+                fileSystemVisitor.FilteredFileFound += FilteredFileFound;
+
 
                 foreach (var item in fileSystemItem)
                 {
@@ -80,16 +86,51 @@ namespace SearchEngine
             if (searchOption.Equals("2"))
             {
                 Console.WriteLine("Please enter your search criteria:" + "\n" +
-                                  "type of file:");
+                                  " - type of file:");
                 customSearch.type = Console.ReadLine();
-                Console.WriteLine("name of file:");
+                Console.WriteLine(" - name of file:");
                 customSearch.name = Console.ReadLine();
             }
         }
 
-        private static void SearchStatus(object sender, SearchStatusEventArgs e)
+        private static void FileFound(object sender, SearchStatusEventArgs e)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(e.FoundTime.ToString(TimeOutputFormat) + ": " + e.ItemName);
+            Console.ResetColor();
+        }
+
+        private static void Start(object sender, EventArgs eventArgs)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Scan started.");
+            Console.ResetColor();
+        }
+
+        private static void Finish (object sender, EventArgs eventArgs)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Scan finished.");
+            Console.ResetColor();
+        }
+
+        private static void FilteredFileFound(object sender, SearchStatusEventArgs e)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(e.FoundTime.ToString(TimeOutputFormat) + ": " + e.ItemName);
+            Console.ResetColor();
+        }
+
+        private static void ErrorAppears(object sender, SearchStatusEventArgs e)
         {
             Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.FoundTime.ToString(TimeOutputFormat) + ": " + e.ItemName);
+            Console.ResetColor();
+        }
+
+        private static void DirectoryFound(object sender, SearchStatusEventArgs e)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine(e.FoundTime.ToString(TimeOutputFormat) + ": " + e.ItemName);
             Console.ResetColor();
         }
