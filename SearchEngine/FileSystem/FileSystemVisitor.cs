@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace FileSystem
 {
     public sealed class FileSystemVisitor
     {
         private bool _scan;
-       private readonly Predicate<FileSystemItem> _filters;
+        private readonly Predicate<FileSystemItem> _filters;
         public event EventHandler<SearchStatusEventArgs> Start;
         public event EventHandler<SearchStatusEventArgs> Finish;
         public event EventHandler<SearchStatusEventArgs> ErrorAppears;
@@ -25,7 +26,7 @@ namespace FileSystem
             ShowStartEvent("Scan started.");
             _scan = true;
 
-            foreach (var directory in GetFileSystemItem(GetDirectories, path, "Directory"))
+            foreach (var directory in GetFileSystemItem(GetDirectories,  path, "Directory"))
             {
                 yield return directory;
 
@@ -41,6 +42,7 @@ namespace FileSystem
 
         private IEnumerable<string> GetFileSystemItem(Func<string, IEnumerable<string>> getItemMethod, string path, string itemName)
         {
+            
             foreach (var searchResult in getItemMethod(path))
             {
                 FileSystemItem item = new FileSystemItem();
@@ -70,25 +72,34 @@ namespace FileSystem
             }
         }
 
-        private void GetDirectories(string path, out IEnumerable<string> iterator)
+        private IEnumerable<string> GetDirectories(string path)
         {
             var directories = Directory.EnumerateDirectories(path, "*.*");
 
-            iterator= SkipUnauthorizedIterator(directories, path);
-
-            DirectoryInfo rootDir = new DirectoryInfo(path);
-            DirectoryInfo[] subDirs = rootDir.GetDirectories();
-            foreach (DirectoryInfo dirInfo in subDirs)
+            foreach (var directory in directories)
             {
-                Console.WriteLine(dirInfo.FullName);
-                GetDirectories(dirInfo.FullName, out iterator);
+                yield return directory;
+
+                foreach (var item in GetDirectories (directory))
+                {
+                    yield return item;
+                }
             }
         }
 
         private IEnumerable<string> GetFiles(string path)
         {
             var files = Directory.EnumerateFiles(path, "*.*");
-            return SkipUnauthorizedIterator(files, path);
+
+            foreach (var file in files)
+            {
+                yield return file;
+
+                foreach (var item in GetFiles(file))
+                {
+                    yield return item;
+                }
+            }
         }
 
         private IEnumerable<T> SkipUnauthorizedIterator<T>(IEnumerable<T> iEnumerable, string path)
@@ -118,9 +129,8 @@ namespace FileSystem
                 if (iterator.Current != null)
                 {
 
-                  yield return iterator.Current;
+                    yield return iterator.Current;
                 }
-
 
             }
 
