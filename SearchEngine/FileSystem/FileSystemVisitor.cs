@@ -7,11 +7,10 @@ namespace FileSystem
 {
     public sealed class FileSystemVisitor
     {
-        private bool _scan;
+        private  int _node = 2; // number of inner catalogs
         private readonly Predicate<FileSystemItem> _filters;
         public event EventHandler<SearchStatusEventArgs> Start;
         public event EventHandler<SearchStatusEventArgs> Finish;
-        public event EventHandler<SearchStatusEventArgs> ErrorAppears;
         public event EventHandler<SearchStatusEventArgs> FileFound;
         public event EventHandler<SearchStatusEventArgs> DirectoryFound;
         public event EventHandler<SearchStatusEventArgs> FilteredFileFound;
@@ -24,25 +23,19 @@ namespace FileSystem
         public IEnumerable<string> FileSystemScan(string path)
         {
             ShowStartEvent("Scan started.");
-            _scan = true;
-
-            foreach (var directory in GetFileSystemItem(GetDirectories,  path, "Directory"))
+        
+            foreach (var directory in GetFileSystemItem(GetElements, path))
             {
                 yield return directory;
 
             }
-            foreach (var file in GetFileSystemItem(GetFiles, path, "File"))
-            {
-                yield return file;
-            }
-            _scan = false;
-
+            
             ShowFinishEvent("Scan finished.");
         }
 
-        private IEnumerable<string> GetFileSystemItem(Func<string, IEnumerable<string>> getItemMethod, string path, string itemName)
+        private IEnumerable<string> GetFileSystemItem(Func<string, IEnumerable<string>> getItemMethod, string path)
         {
-            
+
             foreach (var searchResult in getItemMethod(path))
             {
                 FileSystemItem item = new FileSystemItem();
@@ -55,88 +48,49 @@ namespace FileSystem
 
                     if (_filters is null)
                     {
-                        ShowFileFoundEvent(($"{itemName} found:"));
+                        ShowFileFoundEvent(("File found:"));
                         yield return searchResult;
                     }
                     else if (_filters(item))
                     {
-                        ShowFilteredFileFoundEvent($"Filtered {itemName} found:");
+                        ShowFilteredFileFoundEvent($"Filtered file found:");
                         yield return searchResult;
                     }
                 }
                 else if (_filters is null)
                 {
-                    ShowDirectoryFoundEvent($"{itemName} found:");
+                    ShowDirectoryFoundEvent($"Directory found:");
                     yield return searchResult;
                 }
             }
         }
 
-        private IEnumerable<string> GetDirectories(string path)
-        {
-            var directories = Directory.EnumerateDirectories(path, "*.*");
-
-            foreach (var directory in directories)
-            {
-                yield return directory;
-
-                foreach (var item in GetDirectories (directory))
-                {
-                    yield return item;
-                }
-            }
-        }
-
-        private IEnumerable<string> GetFiles(string path)
+        private IEnumerable<string> GetElements(string path)
         {
             var files = Directory.EnumerateFiles(path, "*.*");
 
             foreach (var file in files)
             {
                 yield return file;
-
-                foreach (var item in GetFiles(file))
-                {
-                    yield return item;
-                }
             }
-        }
 
-        private IEnumerable<T> SkipUnauthorizedIterator<T>(IEnumerable<T> iEnumerable, string path)
-        {
-            var iterator = iEnumerable.GetEnumerator();
+            var directories = Directory.EnumerateDirectories(path, "*.*");
 
-            while (_scan)
+            foreach (var directory in directories)
             {
-                try
+                yield return directory;
+                if (_node > 0)
                 {
-                    if (!iterator.MoveNext())
+                    foreach (var item in GetElements(directory))
                     {
-                        break;
+                        _node--;
+                        yield return item;
                     }
                 }
-
-                catch (UnauthorizedAccessException UAEx)
-                {
-                    ShowErrorAppearsEvent(UAEx.Message);
-                }
-
-                catch (Exception e)
-                {
-                    ShowErrorAppearsEvent(e.Message);
-                }
-
-                if (iterator.Current != null)
-                {
-
-                    yield return iterator.Current;
-                }
-
             }
-
         }
 
-        private void ShowStartEvent(string message)
+       private void ShowStartEvent(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
             {
@@ -181,21 +135,6 @@ namespace FileSystem
                 FoundTime = DateTime.Now
             };
             OnDirectoryFound(args);
-        }
-
-        private void ShowErrorAppearsEvent(string message)
-        {
-            if (string.IsNullOrWhiteSpace(message))
-            {
-                throw new ArgumentException($"'{nameof(message)}' cannot be null or whitespace", nameof(message));
-            }
-
-            var args = new SearchStatusEventArgs()
-            {
-                ItemName = message,
-                FoundTime = DateTime.Now
-            };
-            OnErrorAppears(args);
         }
 
         private void ShowFileFoundEvent(string message)
@@ -254,12 +193,6 @@ namespace FileSystem
         private void OnFilteredFileFound(SearchStatusEventArgs e)
         {
             EventHandler<SearchStatusEventArgs> handler = FilteredFileFound;
-            handler?.Invoke(this, e);
-        }
-
-        private void OnErrorAppears(SearchStatusEventArgs e)
-        {
-            EventHandler<SearchStatusEventArgs> handler = ErrorAppears;
             handler?.Invoke(this, e);
         }
     }

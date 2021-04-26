@@ -34,9 +34,7 @@ namespace SearchEngine
                 fileSystemVisitor.FileFound += FileFound;
                 fileSystemVisitor.Finish += Finish;
                 fileSystemVisitor.DirectoryFound += DirectoryFound;
-                fileSystemVisitor.ErrorAppears += ErrorAppears;
                 fileSystemVisitor.FilteredFileFound += FilteredFileFound;
-
 
                 foreach (var item in fileSystemItem)
                 {
@@ -121,16 +119,9 @@ namespace SearchEngine
             Console.ResetColor();
         }
 
-        private static void ErrorAppears(object sender, SearchStatusEventArgs e)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(e.FoundTime.ToString(TimeOutputFormat) + ": " + e.ItemName);
-            Console.ResetColor();
-        }
-
         private static void DirectoryFound(object sender, SearchStatusEventArgs e)
         {
-            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
             Console.WriteLine(e.FoundTime.ToString(TimeOutputFormat) + ": " + e.ItemName);
             Console.ResetColor();
         }
