@@ -31,10 +31,13 @@ namespace SearchEngine
                 FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(GetScanFilters());
                 IEnumerable<string> fileSystemItem = fileSystemVisitor.FileSystemScan(path);
                 fileSystemVisitor.Start += Start;
+                fileSystemVisitor.AbortSearch += AbortSearch;
+                fileSystemVisitor.SkipFile += SkipFile;
                 fileSystemVisitor.FileFound += FileFound;
                 fileSystemVisitor.Finish += Finish;
                 fileSystemVisitor.DirectoryFound += DirectoryFound;
                 fileSystemVisitor.FilteredFileFound += FilteredFileFound;
+                
 
                 foreach (var item in fileSystemItem)
                 {
@@ -123,6 +126,30 @@ namespace SearchEngine
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             Console.WriteLine(e.FoundTime.ToString(TimeOutputFormat) + ": " + e.ItemName);
+            Console.ResetColor();
+        }
+
+        private static void SkipFile(object sender, SearchInterruptEventArgs args)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            if (args.Name.Contains("Полный"))
+            {
+                args.ShouldSkipItem = true;
+                Console.WriteLine($"File : { args.Name } is skipped");
+            }
+
+            Console.ResetColor();
+        }
+
+        private static void AbortSearch(object sender, SearchInterruptEventArgs args)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            if (args.Name.Contains("2021"))
+            {
+                args.ShouldAbortSearch = true;
+                Console.WriteLine($" Search is abort due to file: {args.Name}");
+            }
+
             Console.ResetColor();
         }
     }
