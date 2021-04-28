@@ -7,7 +7,7 @@ namespace FileSystem
 {
     public sealed class FileSystemVisitor
     {
-        private  int _node = 2; // number of inner catalogs
+        private  int _node = 6; // number of inner catalogs
         private readonly Predicate<FileSystemItem> _filters;
         public event EventHandler<SearchStatusEventArgs> Start;
         public event EventHandler<SearchStatusEventArgs> Finish;
@@ -102,20 +102,33 @@ namespace FileSystem
                 {
                     foreach (var item in GetElements(directory))
                     {
-                        _node--;
+                        
                         yield return item;
+                        _node--;
                     }
                 }
             }
         }
-        private static bool ShouldSkipSearch(SearchInterruptEventArgs result)
+        private static bool ShouldSkipSearch(SearchInterruptEventArgs args)
         {
-            return result.ShouldSkipItem;
+            if (args.Name.Contains("SkipCriteria"))
+            {
+                args.ShouldSkipItem = true;
+                Console.WriteLine($"File : { args.Name } is skipped");
+            }
+            return args.ShouldSkipItem;
         }
 
-        private static bool ShouldAbortSearch(SearchInterruptEventArgs result)
+        private static bool ShouldAbortSearch(SearchInterruptEventArgs args)
         {
-            return result.ShouldAbortSearch;
+            Console.ForegroundColor = ConsoleColor.Red;
+            if (args.Name.Contains("AbortCriteria"))
+            {
+                args.ShouldAbortSearch = true;
+                Console.WriteLine($" Search will be abort due to file: {args.Name}");
+            }
+
+            return args.ShouldAbortSearch;
         }
 
         private SearchInterruptEventArgs CheckingCriteriaInterruption(string file)

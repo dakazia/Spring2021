@@ -26,7 +26,8 @@ namespace SearchEngine.Tests
                 .Setup(item => item.GetDirectories())
                 .Returns(_directories);
             _fileSystemInfo
-                .Setup(item=> item.GetFiles())
+                .Setup(item => item.GetFiles())
+                .Returns(_files);
 
         }
     }
