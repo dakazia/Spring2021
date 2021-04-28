@@ -96,9 +96,9 @@ namespace FileSystem
             {
                 yield return directory;
 
-                bool stopSearch = _node < 0;
+                bool continueSearch = _node > 0;
                
-                if (stopSearch)
+                if (continueSearch)
                 {
                     foreach (var item in GetElements(directory))
                     {
