@@ -22,6 +22,11 @@ namespace FileSystem
 
         public IEnumerable<string> FileSystemScan(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
             ShowStartEvent("Scan started.");
 
             foreach (var directory in GetFileSystemItem(GetElements, path))

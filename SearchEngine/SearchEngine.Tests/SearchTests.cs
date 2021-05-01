@@ -8,102 +8,143 @@ using System.Linq;
 
 namespace SearchEngine.Tests
 {
-
+    [TestFixture]
     public class SearchTests
     {
 
-        [TestFixture]
-        public class DirectoryTest
+        private static string testFolderPath = Path.GetTempPath();
+
+        private string testPath = Path.Combine(testFolderPath, "Test");
+
+
+        private List<string> expectedCollection = new List<string>();
+
+        private static string MakePath(params string[] tokens)
         {
-            private readonly string testFolderPath =
-                Path.GetTempPath();
+            string fullpath = "";
 
-            private List<string> expectedDirs =
-                new List<string>();
-
-            private List<string> expectedFiles =
-                new List<string>();
-
-            private List<string> expectedCollection =
-                new List<string>();
-
-            static private string MakePath(
-                params string[] tokens)
+            foreach (string token in tokens)
             {
-                string fullpath = "";
-                foreach (string token in tokens)
-                {
-                    fullpath = Path.Combine(fullpath, token);
-                }
-
-                return fullpath;
+                fullpath = Path.Combine(fullpath, token);
             }
 
-            [SetUp]
-            public void Setup()
-            {
-                Directory.CreateDirectory(testFolderPath);
+            return fullpath;
+        }
 
-                string[] testDirs =
-                {
-                    MakePath(testFolderPath, "Test", "dir1"),
-                    MakePath(testFolderPath, "Test", "dir1", "dir2"),
-                    MakePath(testFolderPath, "Test", "dir1", "dir2", "dir3")
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            Directory.CreateDirectory(testFolderPath);
+
+            string[] testDirs =
+            {
+                    MakePath(testFolderPath, "Test", "directory1"),
+                    MakePath(testFolderPath, "Test", "directory1", "directory2"),
+                    MakePath(testFolderPath, "Test", "directory1", "directory2", "directory3")
                 };
 
-                foreach (string dir in testDirs)
-                {
-                    expectedDirs.Add(dir);
-                    Directory.CreateDirectory(dir);
-                }
+            foreach (string dir in testDirs)
+            {
+                expectedCollection.Add(dir);
+                Directory.CreateDirectory(dir);
+            }
 
-                expectedDirs.Sort();
-             
-                string[] testFiles =
-                {
-                    MakePath(testFolderPath, "Test", "dir1", "file1.txt"),
-                    MakePath(testFolderPath, "Test", "dir1", "file2.txt"),
-                    MakePath(testFolderPath, "Test", "dir1", "dir2", "file3.txt"),
-                    MakePath(testFolderPath, "Test", "dir1", "dir2", "file4.txt")
+            string[] testFiles =
+            {
+                    MakePath(testFolderPath, "Test", "directory1", "file1.txt"),
+                    MakePath(testFolderPath, "Test", "directory1", "skip.txt"),
+                    MakePath(testFolderPath, "Test", "directory1", "directory2", "stop.txt"),
+                    MakePath(testFolderPath, "Test", "directory1", "directory2", "file4.txt")
                 };
-                foreach (string file in testFiles)
-                {
-                    expectedFiles.Add(file);
-                    FileStream str = File.Create(file);
-                    str.Close();
-                }
-
-                expectedFiles.Sort();
+            foreach (string file in testFiles)
+            {
+                expectedCollection.Add(file);
+                FileStream str = File.Create(file);
+                str.Close();
             }
 
-            [Test]
-            public void VisitDirectory()
+            expectedCollection.Sort();
+        }
+
+
+        [Test]
+        public void FileSystemScan_WithFilter()
+        {
+            Predicate<FileSystemItem> filters = default;
+            filters += item => item.Type.Contains("txt");
+            filters += item => item.Name.Contains("file1");
+
+            FileSystemVisitor visitor = new FileSystemVisitor(filters);
+            IEnumerable<string> collection = visitor.FileSystemScan(testPath);
+            List<string> collectionSort = collection.ToList();
+            collectionSort.Sort();
+
+            Assert.AreEqual(
+                1, collectionSort.Count);
+        }
+
+        [Test]
+        public void FileSystemScan_WithOutFilter()
+        {
+            FileSystemVisitor visitor = new FileSystemVisitor(null);
+            IEnumerable<string> collection = visitor.FileSystemScan(testPath);
+            List<string> collectionSort = collection.ToList();
+            collectionSort.Sort();
+
+            Assert.AreEqual(
+                expectedCollection, collectionSort);
+        }
+
+        [Test]
+        public void FileSystemScan_PathIsNull_ThrowArgumentNullException()
+        {
+            FileSystemVisitor visitor = new FileSystemVisitor(null);
+
+            Assert.Throws<ArgumentNullException>(() => visitor.FileSystemScan(null));
+        }
+
+        [Test]
+        public void FileSystemScan_ItemIsExcludedFromResult()
+        {
+            FileSystemVisitor visitor = new FileSystemVisitor(null);
+            IEnumerable<string> collection = visitor.FileSystemScan(testPath);
+            visitor.FileFound += FileFound;
+            
+           Assert.False(collection.Contains("skip"));
+        }
+
+        [Test]
+        public void FileSystemScan_SearchIsStopped()
+        {
+            FileSystemVisitor visitor = new FileSystemVisitor(null);
+            IEnumerable<string> collection = visitor.FileSystemScan(testPath);
+            visitor.FileFound += FileFound;
+
+            Assert.IsTrue(expectedCollection.Count() > collection.Count());
+        }
+
+        private static void FileFound(object sender, SearchStatusEventArgs e)
+        {
+            if (e.ItemName.Contains("skip"))
             {
-                string testPath = Path.Combine(
-                    testFolderPath, "Test");
-                Predicate<FileSystemItem> filters = default;
-
-                filters += item => item.Type.Contains("file");
-                filters += item => item.Name.Contains("file");
-
-                FileSystemVisitor visitor = new FileSystemVisitor(filters);
-                IEnumerable<string> collection = visitor.FileSystemScan(testPath);
-                List<string> collectionSort = collection.ToList();
-                collectionSort.Sort();
-
-                Assert.AreEqual(
-                    expectedFiles, collectionSort);
-
+                e.ShouldSkipItem = true;
             }
 
-            [TearDown]
-            public void TearDown()
+            if (e.ItemName.Contains("stop"))
             {
-                Directory.Delete(
-                    testFolderPath + "Test", true);
+                e.ShouldAbortSearch = true;
             }
         }
 
+
+        [OneTimeTearDown]
+        public void TearDown()
+        {
+            Directory.Delete(
+                testFolderPath + "Test", true);
+        }
     }
+
 }
+
 

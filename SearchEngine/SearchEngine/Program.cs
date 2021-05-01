@@ -30,6 +30,8 @@ namespace SearchEngine
 
                 FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(GetScanFilters());
                 IEnumerable<string> fileSystemItem = fileSystemVisitor.FileSystemScan(path);
+
+               
                 fileSystemVisitor.Start += Start;
                 fileSystemVisitor.DirectoryFound += DirectoryFound;
                 fileSystemVisitor.FileFound += FileFound;
@@ -103,7 +105,7 @@ namespace SearchEngine
                 Console.WriteLine($"File : { e.ItemName } is skipped");
             }
 
-            if (e.ItemName.Contains("AbortCriteria"))
+            if (e.ItemName.Contains("stop"))
             {
                 e.ShouldAbortSearch = true;
                 Console.WriteLine($" Search will be abort due to file: {e.ItemName}");
