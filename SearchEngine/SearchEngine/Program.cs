@@ -17,8 +17,7 @@ namespace SearchEngine
             do
             {
                 Console.WriteLine(@"Please enter a correct path (for example c:\Windows):");
-                var path = @"c:\Users\Yulya_Davydova\AppData\Local\Temp\Test\";
-                //var path = Console.ReadLine();
+                var path = Console.ReadLine();
 
                 while (string.IsNullOrEmpty(path) || string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
                 {
@@ -30,14 +29,11 @@ namespace SearchEngine
 
                 FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(GetScanFilters());
                 IEnumerable<string> fileSystemItem = fileSystemVisitor.FileSystemScan(path);
-
-               
                 fileSystemVisitor.Start += Start;
                 fileSystemVisitor.DirectoryFound += DirectoryFound;
                 fileSystemVisitor.FileFound += FileFound;
                 fileSystemVisitor.FilteredFileFound += FilteredFileFound;
                 fileSystemVisitor.Finish += Finish;
-
 
                 foreach (var item in fileSystemItem)
                 {
@@ -151,8 +147,8 @@ namespace SearchEngine
                 e.ShouldAbortSearch = true;
                 Console.WriteLine($" Search will be abort due to directory: {e.ItemName}");
             }
-            Console.ResetColor();
 
+            Console.ResetColor();
         }
     }
 }
