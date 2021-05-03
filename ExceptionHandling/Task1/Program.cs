@@ -43,7 +43,7 @@ namespace Task1
                 Console.ResetColor();
                 return false;
             }
-           
+
             return true;
         }
     }

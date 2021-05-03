@@ -54,7 +54,6 @@ namespace Task2
                     '8' => 8,
                     '9' => 9,
                     _ => throw new FormatException(nameof(stringValue)),
-
                 };
             }
 
@@ -66,8 +65,6 @@ namespace Task2
                 numberLong += numberArray[i] * pow;
                 pow *= 10;
             }
-
-            long test = numberLong;
 
             if (isPositiveNumber && numberLong - int.MaxValue > 0)
             {
