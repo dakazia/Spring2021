@@ -59,6 +59,11 @@ namespace Task1
 
         public void AddType(Type type, Type baseType)
         {
+            if (type is null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             if (!_dictionary.ContainsKey(type))
             {
                 _dictionary.Add(baseType, type);
