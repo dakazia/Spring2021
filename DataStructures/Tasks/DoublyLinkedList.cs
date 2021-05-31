@@ -13,12 +13,7 @@ namespace Tasks
 
         public int Length { get => count; }
 
-        public DoublyLinkedList()
-        {
-
-        }
-
-        public void Add(T e)
+       public void Add(T e)
         {
             if (count == 0)
             {
@@ -74,6 +69,8 @@ namespace Tasks
         {
             VerifyValidationIndex(index);
 
+            VerifyIndexEqualsLength(index);
+
             return GetNodeAt(index).data;
         }
 
@@ -84,8 +81,7 @@ namespace Tasks
             {
                 if (node.data.Equals(item))
                 {
-                    node.prev.next = node.next;
-                    node.next.prev = node.prev;
+                    ChangeLinksWhenRemove(node);
                     count--;
                     return;
                 }
@@ -98,12 +94,34 @@ namespace Tasks
         {
             VerifyValidationIndex(index);
 
+            VerifyIndexEqualsLength(index);
+
+            var node = GetNodeAt(index);
+            
+            ChangeLinksWhenRemove(node);
+
+            count--;
+            return node.data;
+        }
+
+        private void VerifyValidationIndex(int index)
+        {
+            if (count == 0 || index > count || index < 0)
+            {
+                throw new IndexOutOfRangeException();
+            }
+        }
+
+        private void VerifyIndexEqualsLength(int index)
+        {
             if (index == count)
             {
                 throw new IndexOutOfRangeException();
             }
+        }
 
-            var node = GetNodeAt(index);
+        private void ChangeLinksWhenRemove(Node<T> node)
+        {
             if (node == head)
             {
                 head = head.next;
@@ -118,17 +136,6 @@ namespace Tasks
             {
                 node.prev.next = node.next;
                 node.next.prev = node.prev;
-            }
-
-            count--;
-            return node.data;
-        }
-
-        public void VerifyValidationIndex(int index)
-        {
-            if (count == 0 || index > count || index < 0)
-            {
-                throw new IndexOutOfRangeException();
             }
         }
 

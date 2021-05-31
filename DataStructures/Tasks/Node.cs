@@ -1,5 +1,7 @@
 ﻿
 
+using System;
+
 namespace Tasks
 {
     public class Node<T>
@@ -11,5 +13,6 @@ namespace Tasks
         // Constructor to create a new node
         // next and prev is by default initialized as null
         public Node(T d) { data = d; }
-    }
+
+     }
 }
