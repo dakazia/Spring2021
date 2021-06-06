@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31313.79
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FizzBuzzKata", "FizzBuzzKata\FizzBuzzKata.csproj", "{A590B1D4-3CD4-4FC5-99A1-6D2B68E795F4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FizzBuzzTest", "FizzBuzzTest\FizzBuzzTest.csproj", "{6CADE1BB-706B-4F31-8B84-2DB85986E381}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FizzBuzzTests", "FizzBuzzTest\FizzBuzzTests.csproj", "{6CADE1BB-706B-4F31-8B84-2DB85986E381}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeapYearKata", "LeapYearKata\LeapYearKata.csproj", "{AD1E9944-94D9-49AE-99F1-5F835C2BA226}"
 EndProject

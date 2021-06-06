@@ -2,11 +2,11 @@ using System;
 using NUnit.Framework;
 using FizzBuzzKata;
 
-namespace FizzBuzzTest
+namespace FizzBuzzTests
 {
-    public class FizzBuzzTest
+    public class FizzBuzzTests
     {
-        [TestCase(0, ExpectedResult = "0")]
+        [TestCase(11, ExpectedResult = "11")]
         [TestCase(3, ExpectedResult = "Fizz")]
         [TestCase(5, ExpectedResult = "Buzz")]
         [TestCase(15, ExpectedResult = "FizzBuzz")]
@@ -19,7 +19,7 @@ namespace FizzBuzzTest
             return FizzBuzz.IsNumberMultiplesTreeOrFiveOrBoth(number);
         }
 
-        [TestCase(0, ExpectedResult = true)]
+        [TestCase(1, ExpectedResult = true)]
         [TestCase(-1, ExpectedResult = false)]
         [TestCase(2, ExpectedResult = false)]
         public bool IsFirstNumberValid_ReturnTrueOrFalse(int number)
@@ -33,12 +33,6 @@ namespace FizzBuzzTest
         public bool IsLastNumberValid_ReturnTrueOrFalse(int number)
         {
             return FizzBuzz.IsLastNumberValid(number);
-        }
-
-        [TestCase(null)]
-        public void IsNumberValid_NumberIsNull_ThrowsArgumentNullException(int number)
-        {
-            Assert.Throws<ArgumentNullException>(() => FizzBuzz.IsNumberValid(number));
         }
     }
 }

@@ -33,10 +33,10 @@ namespace LeapYearTests
             Assert.Throws<ArgumentException>(() => LeapYear.IsLeapYear(year));
         }
 
-        [TestCase(null)]
-        public void IsLeapYear_ThrowsArgumentNullException(int number)
+        [Test]
+        public void IsLeapYear_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => LeapYear.IsLeapYear(number));
+            Assert.Throws<ArgumentNullException>(() => LeapYear.IsLeapYear(null));
         }
     }
 }

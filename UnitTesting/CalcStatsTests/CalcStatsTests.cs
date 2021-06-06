@@ -14,8 +14,8 @@ namespace CalcStatsTests
             return CalcStats.GetMinimumValue(sequence);
         }
 
-        [TestCase(arg: new int[] { 12, 2, 150, -2, -92, 151 }, ExpectedResult = 92)]
-        [TestCase(arg: new int[] { 50, 105, 23, 6 }, ExpectedResult = 123)]
+        [TestCase(arg: new int[] { 12, 2, 150, -2, -92, 151 }, ExpectedResult = 151)]
+        [TestCase(arg: new int[] { 50, 105, 23, 6 }, ExpectedResult = 105)]
         [TestCase(arg: new int[] { -2147483648, 4, 2147483647, 10, 9, 0, 101 }, ExpectedResult = 2147483647)]
         public int GetMaximumValue_WithValidInt(int[] sequence)
         {
@@ -31,9 +31,9 @@ namespace CalcStatsTests
             return CalcStats.GetLengthOfSequence(sequence);
         }
 
-        [TestCase(new int[] { 12, 2, 150, -2, -92, 151 },  75.78d)]
-        [TestCase(new int[] { 50, 105, 23, 6 }, 30.75d)]
-        [TestCase(new int[] { -2147483648, 4, 2147483647, 10, 9, 0, 101 }, 40.75d)]
+        [TestCase(new int[] { 12, 2, 150, -2, -92, 151 }, 36.83d)]
+        [TestCase(new int[] { 50, 105, 23, 6 }, 46d)]
+        [TestCase(new int[] { -2147483648, 4, 2147483647, 10, 9, 0, 101 }, 17.57d)]
         public void GetAverageOfSequence_WithValidInt(int[] sequence, double expectedAverage)
         {
             var delta = 0.01d;
