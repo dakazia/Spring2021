@@ -28,8 +28,7 @@ namespace BrainstormSessions
 
         public void Configure(IApplicationBuilder app,
             IWebHostEnvironment env,
-            IServiceProvider serviceProvider,
-            ILoggerFactory loggerFactory)
+            IServiceProvider serviceProvider)
         {
             //loggerFactory.AddLog4Net("log4net.config");
             LoggerManager.InitLogger();

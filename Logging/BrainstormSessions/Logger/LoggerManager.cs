@@ -9,11 +9,11 @@ namespace BrainstormSessions.Logger
 {
     public class LoggerManager
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(LoggerManager));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(LoggerManager));
 
         public static ILog Log
         {
-            get { return _logger; }
+            get { return Logger; }
         }
 
         public static void InitLogger()
@@ -33,13 +33,13 @@ namespace BrainstormSessions.Logger
                     XmlConfigurator.Configure(repo, log4NetConfig["log4net"]);
 
                     // The first log to be written 
-                    _logger.Info("Log System Initialized");
+                   Logger.Info("Log System Initialized");
 
                 }
             }
             catch (Exception ex)
             {
-                _logger.Error("Error", ex);
+                Logger.Error("Error", ex);
             }
         }
     }
