@@ -30,8 +30,12 @@ namespace BrainstormSessions
             IWebHostEnvironment env,
             IServiceProvider serviceProvider)
         {
+            //Logger is TurnON
             //loggerFactory.AddLog4Net("log4net.config");
-            LoggerManager.InitLogger();
+            if (true)
+            {
+                LoggerManager.InitLogger();
+            }
 
             if (env.IsDevelopment())
             {
